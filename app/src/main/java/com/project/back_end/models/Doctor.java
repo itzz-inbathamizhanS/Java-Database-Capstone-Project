@@ -6,50 +6,80 @@ import jakarta.validation.constraints.*;
 
 import java.util.List;
 
+/**
+ * Entity class representing a Doctor in the Smart Clinic Management System.
+ * This class is mapped to the "doctors" table in the database.
+ */
 @Entity
 @Table(name = "doctors")
 public class Doctor {
 
+    /**
+     * Unique identifier for each doctor (Primary Key)
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Full name of the doctor
+     */
     @NotNull(message = "Doctor name is required")
     @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     @Column(nullable = false)
     private String name;
 
+    /**
+     * Medical specialization of the doctor (e.g., Cardiology, Dermatology)
+     */
     @NotNull(message = "Specialty is required")
     @Size(min = 3, max = 50, message = "Specialty must be between 3 and 50 characters")
     @Column(nullable = false)
     private String specialty;
 
+    /**
+     * Email address used for login and communication
+     */
     @NotNull(message = "Email is required")
     @Email(message = "Email should be valid")
     @Column(nullable = false, unique = true)
     private String email;
 
+    /**
+     * Password for authentication (write-only for security)
+     */
     @NotNull(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
+    /**
+     * Contact phone number (must be exactly 10 digits)
+     */
     @NotNull(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
     @Column(nullable = false, unique = true)
     private String phone;
 
+    /**
+     * List of available consultation time slots for the doctor.
+     * Stored in a separate table "doctor_available_times"
+     */
     @ElementCollection
     @CollectionTable(name = "doctor_available_times", joinColumns = @JoinColumn(name = "doctor_id"))
     @Column(name = "time_slot")
     private List<String> availableTimes;
 
-    // Default constructor required by JPA
+    /**
+     * Default constructor required by JPA
+     */
     public Doctor() {
     }
 
-    // Parameterized constructor for convenience
+    /**
+     * Parameterized constructor for initializing doctor details
+     */
     public Doctor(String name, String specialty, String email, String password, String phone, List<String> availableTimes) {
         this.name = name;
         this.specialty = specialty;
@@ -69,10 +99,16 @@ public class Doctor {
         this.id = id;
     }
 
+    /**
+     * @return doctor's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name sets doctor's name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -93,10 +129,16 @@ public class Doctor {
         this.email = email;
     }
 
+    /**
+     * Password getter (used internally, not exposed in API)
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets password for doctor
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -117,5 +159,3 @@ public class Doctor {
         this.availableTimes = availableTimes;
     }
 }
-
-
